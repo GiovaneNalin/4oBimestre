@@ -28,7 +28,7 @@
 						
 						for(i=0;i<matriz.length;i++){
 							linha = "<tr>";
-							linha += "<td class = 'descricao' value ='" + matriz[i].id_funcoes + "'>" + matriz[i].descricao + "</td>";
+							linha += "<td class = 'descricao' value ='" + matriz[i].id_setor + "'>" + matriz[i].descricao + "</td>";
 							//linha += "<td><button type = 'button' id = 'descricao_alterar' class = 'alterar' value ='" + matriz[i].id_setor + "'>Alterar</button></td>";
 							linha += "</tr>";
 							
@@ -84,7 +84,7 @@
 			});
 				
 			///////////////////////////INLINE DESCRICAO /////////////////////////////
-				$(document).on("click",".descricao",function(){
+			$(document).on("click",".descricao",function(){
 					td = $(this);
 					descricao = td.html();
 					td.html("<input type = 'text' id = 'descricao_alterar' value = '" + descricao + "' />");
@@ -95,6 +95,7 @@
 				$(document).on("blur",".descricao_alterar",function(){
 					td = $(this).closest("td");
 					id_linha = $(this).closest("td").attr("value");
+					
 					$.ajax({
 						url: "altera_inline.php",
 						type: "post",
@@ -115,7 +116,7 @@
 		
 		
 	</script>
-	
+	<br />
 	<div class='container-fluid' align='center'>
 		<fieldset>
 			<legend><h2>SETOR</h2></legend>

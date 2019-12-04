@@ -5,12 +5,12 @@
 	
 	$p = $_POST["pg"];
 	
-	$sql='SELECT id_funcionario, funcao.descricao as funcao, nome, filial.nome as filial FROM funcionario INNER JOIN funcao ON cod_funcao=id_funcao 
+	$sql='SELECT id_funcionario, funcoes.descricao as funcoes, funcionario.nome as nome, filial.nome as filial FROM funcionario INNER JOIN funcoes ON cod_funcao=id_funcoes
 	INNER JOIN filial ON cod_filial=id_filial'; 
 	
 	if(isset($_POST["nome_filtro"])){
 		$nome = $_POST["nome_filtro"];
-		$sql .= " WHERE nome LIKE '%$nome%'";
+		$sql .= " WHERE funcionario.nome LIKE '%$nome%'";
 	}
 	
 	$sql.= " LIMIT $p,5";

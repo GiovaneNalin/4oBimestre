@@ -9,8 +9,7 @@
 	$filial = $_POST["cod_filial"];
 	
 	$insercao =
-		"INSERT INTO funcionario (id_funcionario, cod_funcao, nome, cod_filial)
-			VALUES ('$id_funcionario', '$funcao', '$nome', '$filial')";
+		"INSERT INTO funcionario VALUES ('$id_funcionario', '$funcao', '$nome', '$filial')";
 			
 	// mysql_error($conexao)
 

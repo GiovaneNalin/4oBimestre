@@ -4,7 +4,7 @@
 	$sql = "SELECT COUNT(*) as quantidade_funcionario FROM funcionario";
 	
 	if(!empty($_POST)){
-		$nome = $_POST["nome_funcionario"];
+		$nome = $_POST["nome_filtro"];
 		$sql.= " WHERE nome LIKE '%$nome%'";
 	}
 	

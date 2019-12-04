@@ -6,10 +6,6 @@
 
 	if(isset($_SESSION["autorizado"]) and $_SESSION["permissao"] == 1)
 	{
-		
-	
-		
-	
 ?>
 		<script>
 		var id = null;
@@ -25,14 +21,15 @@
 					type: 'POST',
 					data: {pg: p, nome_filtro: filtro},
 					success: function(matriz){
+						console.log(matriz);
 						$("#tb_funcionario").html("");
 						
 						for(i=0;i<matriz.length;i++){
 							linha = "<tr>";
 							linha += "<td class = 'id_funcionario'>" + matriz[i].id_funcionario + "</td>";
-							linha += "<td class = 'cod_funcao'>" + matriz[i].cod_funcao + "</td>";
+							linha += "<td class = 'funcao'>" + matriz[i].funcoes + "</td>";
 							linha += "<td class = 'nome'>" + matriz[i].nome + "</td>";
-							linha += "<td class = 'cod_filial'>" + matriz[i].cod_filial + "</td>";
+							linha += "<td class = 'filial'>" + matriz[i].filial + "</td>";
 							linha += "<td><button type = 'button' id = 'funcionario_alterar' class = 'alterar' value ='" + matriz[i].id_funcionario + "'>Alterar</button></td>";
 							linha += "</tr>";
 							
@@ -98,7 +95,11 @@
 					},
 					success: function(data){
 						if(data=='1'){
-							$("#resultado").html("funcionario cadastrado!");
+							$("input[name='id_funcionario']").val("");
+							$("select[name='cod_funcao']").val("");
+							$("input[name='nome']").val("");
+							$("select[name='cod_filial']").val("");
+							paginacao(0);
 						}else {
 							console.log(data);
 						}
@@ -114,15 +115,17 @@
 					data: {
 							id: id, 
 							id_funcionario:$("input[name='id_funcionario']").val(),	
-							cod_funcao:$("input[name='cod_funcao']").val(),	
+							cod_funcao:$("select[name='cod_funcao']").val(),	
 							nome:$("input[name='nome']").val(),
-							cod_filial:$("input[name='cod_filial']").val()
+							cod_filial:$("select[name='cod_filial']").val()
 					},
 					success: function(data){
 						if(data==1){
-							$("#resultado").html("Alteração efetuada!");
 							paginacao(0);
+							$("input[name='id_funcionario']").val("");
+							$("select[name='cod_funcao']").val("");
 							$("input[name='nome']").val("");
+							$("selcet[name='cod_filial']").val("");
 							$(".alteracao").attr("class","cadastrar");
 							$(".cadastrar").val("Cadastrar");
 						}else {
@@ -132,18 +135,18 @@
 				});
 			});
 				
-			///////////////////////////INLINE ID_FUNCIONARIO /////////////////////////////
+			/////////////////////////// INLINE CPF /////////////////////////////
 				$(document).on("click",".id_funcionario",function(){
 					td = $(this);
 					id_funcionario = td.html();
 					td.html("<input type = 'text' id = 'id_funcionario_alterar' value = '" + id_funcionario + "' />");
-					td.attr("class","id_funcionario_alterar");
-					$("#id_funcionario").focus();
+					td.attr("class","alterar_id_funcionario");
+					$("#id_funcionario_alterar").focus();
 				});
 							
-				$(document).on("blur",".id_funcionario_alterar",function(){
+				$(document).on("blur",".alterar_id_funcionario",function(){
 					td = $(this);
-					id_linha = $(this).closest("tr").find("button").val();
+					id_linha = $(this).closest("td").attr("value");
 					$.ajax({
 						url: "altera_inline.php",
 						type: "post",
@@ -161,16 +164,24 @@
 					});
 				});
 				
-			///////////////////////////INLINE COD_FUNCAO /////////////////////////////
-				$(document).on("click",".cod_funcao",function(){
+			///////////////////////////INLINE FUNCAO /////////////////////////////
+				$(document).on("click",".funcao",function(){
 					td = $(this);
-					cod_funcao = td.html();
-					td.html("<input type = 'text' id = 'cod_funcao_alterar' value = '" + cod_funcao + "' />");
-					td.attr("class","cod_funcao_alterar");
-					$("#cod_funcao").focus();
+					funcao = td.html();
+					
+					select = "<select id='cod_funcao_alterar'>";
+					select += $("select[name='cod_funcao']").html();
+					select += "</select>";
+					
+					td.html(select);
+					valor = $("option:contains('"+funcao+"')").val();
+					$("#cod_funcao_alterar").val(valor);
+					$("#cod_funcao_alterar").focus();
+					
+					td.attr("class","alterar_funcao");
 				});
 							
-				$(document).on("blur",".cod_funcao_alterar",function(){
+				$(document).on("blur",".alterar_funcao",function(){
 					td = $(this);
 					id_linha = $(this).closest("tr").find("button").val();
 					$.ajax({
@@ -180,26 +191,36 @@
 								tabela: 'funcionario', 
 								coluna: 'cod_funcao',
 								valor: $("#cod_funcao_alterar").val(),
-								id: id_linha},
+								id: id_linha
+						},
 						success: function(data){
 							console.log(data);
-							cod_funcao = $("#cod_funcao").val();
-							td.html(cod_funcao);
-							td.attr("class","cod_funcao");
+							cod_funcao = $("#cod_funcao_alterar").val();
+							funcao = $("#cod_funcao_alterar").find("option[value='" + cod_funcao + "']").html();
+							td.html(funcao);
+							td.attr("class","funcao");
 						}
 					});
 				});
 				
-			///////////////////////////INLINE COD_FILIAL /////////////////////////////
-				$(document).on("click",".cod_filial",function(){
+			///////////////////////////INLINE FILIAL /////////////////////////////
+				$(document).on("click",".filial",function(){
 					td = $(this);
-					cod_filial = td.html();
-					td.html("<input type = 'text' id = 'cod_filial_alterar' value = '" + cod_filial + "' />");
-					td.attr("class","cod_filial_alterar");
-					$("#cod_filial").focus();
+					filial = td.html();
+					
+					select = "<select id='cod_filial_alterar'>";
+					select += $("select[name='cod_filial']").html();
+					select += "</select>";
+					
+					td.html(select);
+					valor = $("option:contains('"+filial+"')").val();
+					$("#cod_filial_alterar").val(valor);
+					$("#cod_filial_alterar").focus();
+					
+					td.attr("class","alterar_filial");
 				});
 							
-				$(document).on("blur",".cod_filial_alterar",function(){
+				$(document).on("blur",".alterar_filial",function(){
 					td = $(this);
 					id_linha = $(this).closest("tr").find("button").val();
 					$.ajax({
@@ -209,12 +230,14 @@
 								tabela: 'funcionario', 
 								coluna: 'cod_filial',
 								valor: $("#cod_filial_alterar").val(),
-								id: id_linha},
+								id: id_linha
+						},
 						success: function(data){
 							console.log(data);
-							cod_filial = $("#cod_filial").val();
-							td.html(cod_filial);
-							td.attr("class","cod_filial");
+							cod_filial = $("#cod_filial_alterar").val();
+							filial = $("#cod_filial_alterar").find("option[value='" + cod_filial + "']").html();
+							td.html(filial);
+							td.attr("class","filial");
 						}
 					});
 				});
@@ -225,7 +248,7 @@
 					nome = td.html();
 					td.html("<input type = 'text' id = 'nome_alterar' value = '" + nome + "' />");
 					td.attr("class","nome_alterar");
-					$("#nome").focus();
+					$("#nome_alterar").focus();
 				});
 							
 				$(document).on("blur",".nome_alterar",function(){
@@ -241,7 +264,7 @@
 								id: id_linha},
 						success: function(data){
 							console.log(data);
-							nome = $("#nome").val();
+							nome = $("#nome_alterar").val();
 							td.html(nome);
 							td.attr("class","nome");
 						}
@@ -249,11 +272,10 @@
 				});
 		});
 		</script>
-		
+			<br />
 			<div class='container-fluid' align='center'>
 				<fieldset>
 				<legend><h2>FUNCIONÁRIO</h2></legend>
-				<form method = 'post' action = "insere_funcionario.php">
 				
 				<div class='form-row'>
 
@@ -263,9 +285,9 @@
 					<div class='form-group col-md-12'>
 						CPF: <input class='form-control' type = 'number' name = 'id_funcionario' placeholder = "Insira o cpf do funcionario..." /><br/><br/>
 					</div>
-					<div class='form-group col-md-12'>
+					<div class='form-group col-md-6'>
 						Função: <select class='form-control' name = 'cod_funcao'>
-						<option>:: função </option>
+						<option>:: Função </option>
 							
 							<?php
 								$consulta_funcao = "SELECT * FROM funcoes";
@@ -277,7 +299,7 @@
 							?>
 							</select>
 					</div>
-					<div class='form-group col-md-12'>
+					<div class='form-group col-md-6'>
 						Filial: <select class='form-control' name = 'cod_filial'>
 							<option>:: Filial </option>
 							
@@ -292,8 +314,8 @@
 							?>
 						</select>
 					</div>
-						<br/><br/>
 				</div>
+				<br />
 				<input type = 'button' value = 'Cadastrar' class = "cadastrar"/>
 				</form>
 				</fieldset>
